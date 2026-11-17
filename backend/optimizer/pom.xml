@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>dev.tabiji</groupId>
+        <artifactId>tabiji-backend</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tabiji-optimizer</artifactId>
+    <name>Tabiji :: Optimizer</name>
+    <description>
+        Framework-free itinerary optimization engine: shortest paths, travel matrices,
+        time-window scheduling and the TOPTW heuristic. Depends on the JDK only.
+    </description>
+
+    <properties>
+        <!-- The engine is the most critical code in the project: hold it to a higher bar. -->
+        <jacoco.line.minimum>0.90</jacoco.line.minimum>
+        <jacoco.branch.minimum>0.80</jacoco.branch.minimum>
+    </properties>
+
+    <!-- Deliberately no compile-scope dependencies: the engine must stay framework-free. -->
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
