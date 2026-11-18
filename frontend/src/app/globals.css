@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Palette inspired by traditional Japanese colours:
+ * 藍 ai (indigo) as the primary, 朱 shu (vermilion) as the accent, warm neutrals for paper.
+ */
+@theme {
+  --color-ai-50: #eef4fa;
+  --color-ai-100: #d6e4f1;
+  --color-ai-200: #adc8e3;
+  --color-ai-500: #2f6a9e;
+  --color-ai-600: #235683;
+  --color-ai-700: #1b4467;
+  --color-ai-900: #0f2740;
+  --color-shu-50: #fdf1ef;
+  --color-shu-500: #d9443a;
+  --color-shu-600: #b8352d;
+  --color-paper: #faf8f5;
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+    "Yu Gothic UI", Meiryo, sans-serif;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-stone-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Visible keyboard focus everywhere (WCAG 2.4.7). */
+:focus-visible {
+  outline: 3px solid var(--color-ai-500);
+  outline-offset: 2px;
+}
+
+/* Leaflet sizes itself; the container just needs a height. */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 0.75rem;
+  font-family: var(--font-sans);
+}
+
+.stop-marker {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+}
+
+.base-marker {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: var(--color-stone-900);
+  color: #fff;
+  font-size: 15px;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+}

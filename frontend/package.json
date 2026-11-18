@@ -1,0 +1,60 @@
+{
+  "name": "@tabiji/web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "gen:api": "openapi-typescript ../docs/api/openapi.json -o src/lib/api/schema.d.ts && prettier --write src/lib/api/schema.d.ts",
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.108.0",
+    "clsx": "^2.1.1",
+    "leaflet": "^1.9.4",
+    "next": "16.4.6",
+    "openapi-fetch": "^0.17.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-leaflet": "^5.0.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1",
+    "@tailwindcss/turbopack": "4.3.3",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.12",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.3.0",
+    "@vitest/coverage-v8": "^5.1.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "jsdom": "^31.0.1",
+    "openapi-typescript": "^7.13.0",
+    "prettier": "^3.10.1",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5",
+    "vitest": "^5.1.0"
+  },
+  "description": "Tabiji — Japan Intelligent Travel Planner (Next.js frontend)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  }
+}
