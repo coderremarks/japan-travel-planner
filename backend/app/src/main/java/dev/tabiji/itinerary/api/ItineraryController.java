@@ -30,6 +30,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -77,8 +79,10 @@ public class ItineraryController {
         return PageResponse.of(itineraries.list(user.id(), page, size), ItinerarySummaryResponse::from);
     }
 
+    // @ResponseStatus only documents the status for the OpenAPI contract; the ResponseEntity sets it.
     @PostMapping
-    @Operation(summary = "Create an itinerary")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create an itinerary", description = "201 with Location and ETag headers.")
     public ResponseEntity<ItineraryResponse> create(
             @AuthenticationPrincipal AppUserPrincipal user, @Valid @RequestBody ItineraryRequest body) {
         ItineraryView view = itineraries.create(user.id(), body.toDraft());
@@ -116,6 +120,7 @@ public class ItineraryController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete an itinerary and its plan")
     public ResponseEntity<Void> delete(@AuthenticationPrincipal AppUserPrincipal user, @PathVariable UUID id) {
         itineraries.delete(user.id(), id);
@@ -123,10 +128,15 @@ public class ItineraryController {
     }
 
     @PostMapping("/{id}/duplicate")
-    @Operation(summary = "Copy an itinerary (without its plan)")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Copy an itinerary (without its plan)", description = "201 with Location and ETag headers.")
     public ResponseEntity<ItineraryResponse> duplicate(
-            @AuthenticationPrincipal AppUserPrincipal user, @PathVariable UUID id) {
-        return created(itineraries.duplicate(user.id(), id));
+            @AuthenticationPrincipal AppUserPrincipal user,
+            @PathVariable UUID id,
+            @Parameter(description = "Language of the copy's title suffix")
+                    @RequestParam(defaultValue = "en")
+                    @Pattern(regexp = "en|ja") String lang) {
+        return created(itineraries.duplicate(user.id(), id, "ja".equals(lang)));
     }
 
     @PostMapping("/{id}/plan")

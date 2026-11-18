@@ -192,6 +192,24 @@ class ItineraryApiIT extends IntegrationTest {
                 .isEqualTo(copyBody.get("id").asString());
     }
 
+    @Test
+    void copiesAreNamedInTheTravellersLanguage() throws Exception {
+        String id = traveller
+                .body(traveller.postJson(
+                        "/api/v1/itineraries", trips.tokyoTrip(START, 1, List.of("senso-ji"), List.of())))
+                .get("id")
+                .asString();
+
+        MvcResult japanese = traveller.postJson("/api/v1/itineraries/" + id + "/duplicate?lang=ja", "");
+        assertThat(japanese.getResponse().getStatus()).isEqualTo(201);
+        assertThat(traveller.body(japanese).get("title").asString()).isEqualTo("Tokyo test trip（コピー）");
+        assertThat(traveller
+                        .postJson("/api/v1/itineraries/" + id + "/duplicate?lang=fr", "")
+                        .getResponse()
+                        .getStatus())
+                .isEqualTo(400);
+    }
+
     private String code(MvcResult result) throws Exception {
         return traveller.body(result).get("code").asString();
     }

@@ -2,6 +2,8 @@ package dev.tabiji.shared.openapi;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import java.util.List;
@@ -65,17 +68,40 @@ public class OpenApiConfiguration {
     OpenApiCustomizer problemResponses() {
         return openApi -> {
             openApi.getComponents().addSchemas(PROBLEM, problemSchema());
-            ApiResponse problem = new ApiResponse()
-                    .description("Error (RFC 9457 problem details)")
-                    .content(new Content()
-                            .addMediaType(
-                                    "application/problem+json",
-                                    new MediaType().schema(new Schema<>().$ref("#/components/schemas/" + PROBLEM))));
             openApi.getPaths()
                     .values()
                     .forEach(path -> path.readOperations()
-                            .forEach(operation -> operation.getResponses().addApiResponse("default", problem)));
+                            .forEach(operation -> operation.getResponses().addApiResponse("default", problem())));
         };
+    }
+
+    /**
+     * Sign-out is handled by Spring Security's logout filter, not by a controller, so springdoc cannot
+     * see it. It is described here so that the contract lists every endpoint the frontend calls.
+     */
+    @Bean
+    OpenApiCustomizer logoutOperation() {
+        return openApi -> openApi.getPaths()
+                .addPathItem(
+                        "/api/v1/auth/logout",
+                        new PathItem()
+                                .post(new Operation()
+                                        .addTagsItem("Authentication")
+                                        .operationId("logout")
+                                        .summary("Sign out")
+                                        .description("Invalidates the session and clears the session cookie.")
+                                        .responses(new ApiResponses()
+                                                .addApiResponse("204", new ApiResponse().description("Signed out"))
+                                                .addApiResponse("default", problem()))));
+    }
+
+    private static ApiResponse problem() {
+        return new ApiResponse()
+                .description("Error (RFC 9457 problem details)")
+                .content(new Content()
+                        .addMediaType(
+                                "application/problem+json",
+                                new MediaType().schema(new Schema<>().$ref("#/components/schemas/" + PROBLEM))));
     }
 
     /**

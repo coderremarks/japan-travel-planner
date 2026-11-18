@@ -78,6 +78,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sign out
+         * @description Invalidates the session and clears the session cookie.
+         */
+        post: operations["logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/me": {
         parameters: {
             query?: never;
@@ -142,7 +162,10 @@ export interface paths {
         /** List my itineraries, most recently updated first */
         get: operations["list"];
         put?: never;
-        /** Create an itinerary */
+        /**
+         * Create an itinerary
+         * @description 201 with Location and ETag headers.
+         */
         post: operations["create"];
         delete?: never;
         options?: never;
@@ -201,7 +224,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Copy an itinerary (without its plan) */
+        /**
+         * Copy an itinerary (without its plan)
+         * @description 201 with Location and ETag headers.
+         */
         post: operations["duplicate"];
         delete?: never;
         options?: never;
@@ -773,6 +799,33 @@ export interface operations {
             };
         };
     };
+    logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Signed out */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error (RFC 9457 problem details) */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
     me: {
         parameters: {
             query?: never;
@@ -911,8 +964,8 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK */
-            200: {
+            /** @description Created */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1011,8 +1064,8 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1064,7 +1117,10 @@ export interface operations {
     };
     duplicate: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Language of the copy's title suffix */
+                lang?: string;
+            };
             header?: never;
             path: {
                 id: string;
@@ -1073,8 +1129,8 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description Created */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };

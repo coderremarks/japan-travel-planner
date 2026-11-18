@@ -1,6 +1,7 @@
 "use client";
 
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Locale } from "@/i18n/config";
 import { ApiError, CSRF_COOKIE, CSRF_HEADER, api, readCookie, unwrap } from "./client";
 import type { Category, Itinerary, ItineraryRequest, PlanResponse, PlanStrategy, User } from "./types";
 
@@ -194,8 +195,9 @@ export function useDeleteItinerary() {
 export function useDuplicateItinerary() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: async (id: string) =>
-      unwrap(await api.POST("/api/v1/itineraries/{id}/duplicate", { params: { path: { id } } })),
+    // The API names the copy in the language the traveller is using ("… (copy)" / "…（コピー）").
+    mutationFn: async ({ id, lang }: { id: string; lang: Locale }) =>
+      unwrap(await api.POST("/api/v1/itineraries/{id}/duplicate", { params: { path: { id }, query: { lang } } })),
     onSuccess: () => void client.invalidateQueries({ queryKey: ["itineraries"] }),
   });
 }

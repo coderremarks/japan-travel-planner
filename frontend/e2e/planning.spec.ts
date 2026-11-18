@@ -70,6 +70,26 @@ test.describe("trip planning", () => {
     await expectNoSeriousA11yViolations(page);
   });
 
+  test("a traveller duplicates a trip and deletes the original", async ({ page }) => {
+    await register(page, "en");
+    await page.getByRole("button", { name: "New trip" }).first().click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("My Japan trip");
+
+    await page.goto("/en/itineraries");
+    const trips = page.getByRole("article");
+    await expect(trips).toHaveCount(1);
+
+    await page.getByRole("button", { name: "Duplicate: My Japan trip", exact: true }).click();
+    await expect(trips).toHaveCount(2);
+    await expect(page.getByRole("link", { name: "My Japan trip (copy)", exact: true })).toBeVisible();
+    await expectNoSeriousA11yViolations(page);
+
+    page.once("dialog", (dialog) => void dialog.accept());
+    await page.getByRole("button", { name: "Delete: My Japan trip", exact: true }).click();
+    await expect(trips).toHaveCount(1);
+    await expect(trips.getByRole("heading")).toHaveText("My Japan trip (copy)");
+  });
+
   test("signed-out visitors are sent to sign in and back", async ({ page }) => {
     await page.goto("/en/itineraries");
     await expect(page).toHaveURL(/\/en\/login\?next=%2Fen%2Fitineraries$/);

@@ -49,6 +49,11 @@ class PlanningInputFactory {
             CatalogService catalog,
             TravelMatrixBuilder travelMatrixBuilder,
             @Value("${app.planning.max-suggestions:12}") int maxSuggestions) {
+        if (maxSuggestions < 0 || maxSuggestions > CandidateScoring.MAX_SUGGESTIONS) {
+            // Fail at startup: more suggestions could add up to more than one chosen place is worth.
+            throw new IllegalArgumentException(
+                    "app.planning.max-suggestions must be between 0 and " + CandidateScoring.MAX_SUGGESTIONS);
+        }
         this.catalog = catalog;
         this.travelMatrixBuilder = travelMatrixBuilder;
         this.maxSuggestions = maxSuggestions;

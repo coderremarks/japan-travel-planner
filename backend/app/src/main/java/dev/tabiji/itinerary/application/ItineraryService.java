@@ -120,12 +120,13 @@ public class ItineraryService {
         itineraries.delete(itinerary);
     }
 
-    public ItineraryView duplicate(UUID ownerId, UUID itineraryId) {
+    /** Copies an itinerary without its plan; the title gets a "copy" suffix in the traveller's language. */
+    public ItineraryView duplicate(UUID ownerId, UUID itineraryId, boolean japanese) {
         Itinerary source = load(ownerId, itineraryId);
         if (itineraries.countByOwnerId(ownerId) >= MAX_ITINERARIES_PER_USER) {
             throw ApiException.validation(List.of(new FieldViolation("itinerary", "LIMIT_REACHED")));
         }
-        String title = truncate(source.title() + " (copy)", 120);
+        String title = truncate(source.title() + (japanese ? "（コピー）" : " (copy)"), 120);
         return view(itineraries.save(source.duplicate(ownerId, title, clock.instant())));
     }
 

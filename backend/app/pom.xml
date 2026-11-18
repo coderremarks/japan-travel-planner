@@ -15,7 +15,7 @@
     <description>Spring Boot REST API: accounts, catalogue, itineraries and planning</description>
 
     <properties>
-        <!-- Measured 90.6 % / 73.0 % on 2026-11-18; gates sit a few points below to avoid flakiness. -->
+        <!-- Measured 90.6 % / 73.5 % on 2026-11-18; gates sit a few points below to avoid flakiness. -->
         <jacoco.line.minimum>0.85</jacoco.line.minimum>
         <jacoco.branch.minimum>0.65</jacoco.branch.minimum>
     </properties>

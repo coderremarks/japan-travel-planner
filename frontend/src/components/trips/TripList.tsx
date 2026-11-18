@@ -96,18 +96,27 @@ function TripCard({ trip }: { trip: ItinerarySummary }) {
         {t("trips.updated", { date: formatDateTime(trip.updatedAt, locale) })}
       </p>
       <div className="mt-4 flex flex-wrap gap-2 border-t border-stone-100 pt-4">
+        {/* Every card has the same three actions, so their accessible names include the trip title. */}
         <Link
           href={`/${locale}/itineraries/${trip.id}`}
+          aria-label={`${t("trips.open")}: ${trip.title}`}
           className="bg-ai-600 hover:bg-ai-700 rounded-lg px-3 py-1.5 text-sm font-medium text-white"
         >
           {t("trips.open")}
         </Link>
-        <Button variant="secondary" size="sm" disabled={duplicate.isPending} onClick={() => duplicate.mutate(trip.id)}>
+        <Button
+          variant="secondary"
+          size="sm"
+          aria-label={`${t("trips.duplicate")}: ${trip.title}`}
+          disabled={duplicate.isPending}
+          onClick={() => duplicate.mutate({ id: trip.id, lang: locale })}
+        >
           {t("trips.duplicate")}
         </Button>
         <Button
           variant="danger"
           size="sm"
+          aria-label={`${t("trips.delete")}: ${trip.title}`}
           disabled={remove.isPending}
           onClick={() => {
             if (window.confirm(t("trips.confirmDelete", { title: trip.title }))) {
