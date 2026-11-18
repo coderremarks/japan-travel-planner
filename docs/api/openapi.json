@@ -23,13 +23,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Stats"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Aggregate usage counts (ADMIN only)",
@@ -42,7 +52,7 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "type" : "array",
                   "items" : {
@@ -52,6 +62,16 @@
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Destination areas",
@@ -62,24 +82,26 @@
       "get" : {
         "description" : "Sets the XSRF-TOKEN cookie; echo it in X-XSRF-TOKEN.",
         "operationId" : "csrf",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "token",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/CsrfToken"
-          }
-        } ],
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CsrfInfoResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Issue the CSRF cookie",
@@ -103,13 +125,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/UserResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Sign in",
@@ -123,13 +155,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/UserResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Current user",
@@ -152,13 +194,23 @@
         "responses" : {
           "201" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/UserResponse"
                 }
               }
             },
             "description" : "Created"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Create an account and sign in",
@@ -180,7 +232,7 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "type" : "array",
                   "items" : {
@@ -190,6 +242,16 @@
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Places to stay (start and end of every trip day)",
@@ -225,13 +287,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PageResponseItinerarySummaryResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "List my itineraries, most recently updated first",
@@ -252,13 +324,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ItineraryResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Create an itinerary",
@@ -280,6 +362,16 @@
         "responses" : {
           "200" : {
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Delete an itinerary and its plan",
@@ -300,13 +392,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ItineraryResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Get one of my itineraries",
@@ -345,13 +447,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ItineraryResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Replace an itinerary's editable fields",
@@ -390,6 +502,16 @@
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Export the latest plan as iCalendar",
@@ -411,13 +533,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ItineraryResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Copy an itinerary (without its plan)",
@@ -446,6 +578,16 @@
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Export the itinerary and its plan as JSON",
@@ -468,13 +610,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PlanResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Latest generated plan",
@@ -505,13 +657,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PlanResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Generate a plan",
@@ -573,13 +735,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PageResponsePlaceSummaryResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Search places",
@@ -601,13 +773,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PlaceDetailResponse"
                 }
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Error (RFC 9457 problem details)"
           }
         },
         "summary" : "Place details with opening hours and data provenance",
@@ -634,7 +816,8 @@
           "name" : {
             "$ref" : "#/components/schemas/LocalizedText"
           }
-        }
+        },
+        "required" : [ "code", "lat", "lng", "name" ]
       },
       "BaseLocationResponse" : {
         "type" : "object",
@@ -660,7 +843,8 @@
           "slug" : {
             "type" : "string"
           }
-        }
+        },
+        "required" : [ "areaCode", "id", "lat", "lng", "name", "slug" ]
       },
       "Comparison" : {
         "type" : "object",
@@ -681,7 +865,8 @@
             "type" : "integer",
             "format" : "int32"
           }
-        }
+        },
+        "required" : [ "additionalPlaces", "baselineScheduledCount", "baselineTravelMinutes", "travelMinutesSaved" ]
       },
       "CsrfInfoResponse" : {
         "type" : "object",
@@ -692,21 +877,8 @@
           "headerName" : {
             "type" : "string"
           }
-        }
-      },
-      "CsrfToken" : {
-        "type" : "object",
-        "properties" : {
-          "headerName" : {
-            "type" : "string"
-          },
-          "parameterName" : {
-            "type" : "string"
-          },
-          "token" : {
-            "type" : "string"
-          }
-        }
+        },
+        "required" : [ "cookieName", "headerName" ]
       },
       "Day" : {
         "type" : "object",
@@ -751,7 +923,8 @@
               "$ref" : "#/components/schemas/Visit"
             }
           }
-        }
+        },
+        "required" : [ "admissionYen", "date", "dayIndex", "departure", "returnArrival", "returnLeg", "transportCostYen", "travelMinutes", "visits" ]
       },
       "ItineraryExport" : {
         "type" : "object",
@@ -770,7 +943,8 @@
             "type" : "integer",
             "format" : "int32"
           }
-        }
+        },
+        "required" : [ "exportedAt", "itinerary", "schemaVersion" ]
       },
       "ItineraryRequest" : {
         "type" : "object",
@@ -922,7 +1096,8 @@
             "type" : "integer",
             "format" : "int64"
           }
-        }
+        },
+        "required" : [ "baseLocation", "budgetYen", "createdAt", "dayEnd", "dayStart", "endDate", "id", "includeSuggestions", "interests", "maxVisitsPerDay", "startDate", "stops", "title", "travelModes", "updatedAt", "version" ]
       },
       "ItinerarySummaryResponse" : {
         "type" : "object",
@@ -953,7 +1128,8 @@
             "type" : "string",
             "format" : "date-time"
           }
-        }
+        },
+        "required" : [ "endDate", "id", "startDate", "stopCount", "title", "updatedAt" ]
       },
       "Leg" : {
         "type" : "object",
@@ -987,7 +1163,8 @@
               "$ref" : "#/components/schemas/LocalizedText"
             }
           }
-        }
+        },
+        "required" : [ "costYen", "distanceMeters", "estimated", "minutes", "mode", "source", "via" ]
       },
       "LocalizedText" : {
         "type" : "object",
@@ -998,7 +1175,8 @@
           "ja" : {
             "type" : "string"
           }
-        }
+        },
+        "required" : [ "en", "ja" ]
       },
       "LoginRequest" : {
         "type" : "object",
@@ -1029,7 +1207,8 @@
           "opens" : {
             "type" : "string"
           }
-        }
+        },
+        "required" : [ "closes", "dayOfWeek", "opens" ]
       },
       "PageResponseItinerarySummaryResponse" : {
         "type" : "object",
@@ -1056,7 +1235,8 @@
             "type" : "integer",
             "format" : "int32"
           }
-        }
+        },
+        "required" : [ "content", "page", "size", "totalElements", "totalPages" ]
       },
       "PageResponsePlaceSummaryResponse" : {
         "type" : "object",
@@ -1083,7 +1263,8 @@
             "type" : "integer",
             "format" : "int32"
           }
-        }
+        },
+        "required" : [ "content", "page", "size", "totalElements", "totalPages" ]
       },
       "PlaceDetailResponse" : {
         "type" : "object",
@@ -1112,7 +1293,8 @@
             "type" : "string",
             "format" : "date"
           }
-        }
+        },
+        "required" : [ "closures", "holidayPolicy", "openingHours", "place" ]
       },
       "PlaceSummaryResponse" : {
         "type" : "object",
@@ -1157,7 +1339,8 @@
             "type" : "integer",
             "format" : "int32"
           }
-        }
+        },
+        "required" : [ "admissionYen", "areaCode", "category", "dataSource", "id", "lat", "lng", "name", "slug", "summary", "visitMinutes" ]
       },
       "PlanDocument" : {
         "type" : "object",
@@ -1220,7 +1403,8 @@
               "$ref" : "#/components/schemas/Unscheduled"
             }
           }
-        }
+        },
+        "required" : [ "algorithmVersion", "days", "generatedAt", "hints", "itineraryId", "notices", "schemaVersion", "solver", "status", "strategy", "summary", "unscheduled" ]
       },
       "PlanRequest" : {
         "type" : "object",
@@ -1241,7 +1425,8 @@
           "stale" : {
             "type" : "boolean"
           }
-        }
+        },
+        "required" : [ "stale" ]
       },
       "PlanStateResponse" : {
         "type" : "object",
@@ -1253,7 +1438,52 @@
             "type" : "string",
             "enum" : [ "COMPLETE", "PARTIAL", "INFEASIBLE" ]
           }
-        }
+        },
+        "required" : [ "stale", "status" ]
+      },
+      "Problem" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "Stable machine-readable error code"
+          },
+          "detail" : {
+            "type" : "string"
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "code" : {
+                  "type" : "string"
+                },
+                "field" : {
+                  "type" : "string"
+                }
+              },
+              "required" : [ "code", "field" ]
+            }
+          },
+          "instance" : {
+            "type" : "string"
+          },
+          "requestId" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "status" ]
       },
       "RegisterRequest" : {
         "type" : "object",
@@ -1311,7 +1541,8 @@
           "timeLimitReached" : {
             "type" : "boolean"
           }
-        }
+        },
+        "required" : [ "constructionScheduled", "constructionTravelMinutes", "elapsedMillis", "improvingMoves", "iterations", "seed", "timeLimitReached" ]
       },
       "Stats" : {
         "type" : "object",
@@ -1328,7 +1559,8 @@
             "type" : "integer",
             "format" : "int64"
           }
-        }
+        },
+        "required" : [ "itineraries", "plans", "users" ]
       },
       "StopRequest" : {
         "type" : "object",
@@ -1352,7 +1584,8 @@
           "place" : {
             "$ref" : "#/components/schemas/PlaceSummaryResponse"
           }
-        }
+        },
+        "required" : [ "mandatory", "place" ]
       },
       "Summary" : {
         "type" : "object",
@@ -1392,7 +1625,8 @@
           "withinBudget" : {
             "type" : "boolean"
           }
-        }
+        },
+        "required" : [ "admissionYen", "budgetYen", "mandatoryScheduled", "mandatoryTotal", "scheduledCount", "totalCostYen", "transportCostYen", "travelMinutes", "withinBudget" ]
       },
       "Unscheduled" : {
         "type" : "object",
@@ -1417,7 +1651,8 @@
           "suggested" : {
             "type" : "boolean"
           }
-        }
+        },
+        "required" : [ "mandatory", "name", "placeId", "reason", "slug", "suggested" ]
       },
       "UserResponse" : {
         "type" : "object",
@@ -1438,7 +1673,8 @@
           "role" : {
             "type" : "string"
           }
-        }
+        },
+        "required" : [ "displayName", "email", "id", "preferredLocale", "role" ]
       },
       "Visit" : {
         "type" : "object",
@@ -1494,7 +1730,8 @@
             "type" : "integer",
             "format" : "int32"
           }
-        }
+        },
+        "required" : [ "admissionYen", "arrival", "category", "end", "lat", "lng", "mandatory", "name", "placeId", "slug", "start", "suggested", "travel", "waitMinutes" ]
       }
     },
     "securitySchemes" : {
@@ -1504,6 +1741,7 @@
         "type" : "apiKey"
       },
       "session" : {
+        "description" : "__Host-TABIJI_SESSION in production",
         "in" : "cookie",
         "name" : "TABIJI_SESSION",
         "type" : "apiKey"

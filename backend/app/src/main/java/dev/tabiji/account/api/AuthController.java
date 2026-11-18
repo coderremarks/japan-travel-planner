@@ -13,6 +13,7 @@ import dev.tabiji.security.ratelimit.RateLimiter.Policy;
 import dev.tabiji.shared.error.ApiException;
 import dev.tabiji.shared.error.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -53,7 +54,7 @@ public class AuthController {
 
     @GetMapping("/csrf")
     @Operation(summary = "Issue the CSRF cookie", description = "Sets the XSRF-TOKEN cookie; echo it in X-XSRF-TOKEN.")
-    public CsrfInfoResponse csrf(CsrfToken token) {
+    public CsrfInfoResponse csrf(@Parameter(hidden = true) CsrfToken token) {
         // Accessing the token makes the repository write the cookie.
         token.getToken();
         return new CsrfInfoResponse("XSRF-TOKEN", token.getHeaderName());

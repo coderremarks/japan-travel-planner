@@ -11,6 +11,7 @@ import dev.tabiji.itinerary.application.ItineraryService;
 import dev.tabiji.itinerary.domain.ItineraryDraft;
 import dev.tabiji.itinerary.domain.ItineraryStop;
 import dev.tabiji.optimizer.travel.TravelMode;
+import dev.tabiji.shared.error.ApiException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -75,7 +76,14 @@ class DemoDataInitializer implements ApplicationRunner {
         if (accountRepository.findByEmail(email).isPresent()) {
             return;
         }
-        UserAccount demo = accounts.register(email, password, "Demo Traveller", AppLocale.EN);
+        UserAccount demo;
+        try {
+            demo = accounts.register(email, password, "Demo Traveller", AppLocale.EN);
+        } catch (ApiException rejected) {
+            // A local convenience must not stop the application; say why, never echo the password.
+            log.warn("Demo data skipped: TABIJI_DEMO_PASSWORD was rejected ({})", rejected.violations());
+            return;
+        }
         Optional<java.util.UUID> base = baseLocations.findAll().stream()
                 .filter(location -> location.slug().equals("asakusa"))
                 .map(location -> location.id())

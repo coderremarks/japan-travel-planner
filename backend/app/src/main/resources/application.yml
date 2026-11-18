@@ -76,6 +76,8 @@ springdoc:
   swagger-ui:
     enabled: false
   writer-with-order-by-keys: true
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
 
 app:
   security:
