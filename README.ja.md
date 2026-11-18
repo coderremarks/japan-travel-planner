@@ -196,3 +196,8 @@ flowchart LR
   リポジトリもまだ push していないため）。CI の `e2e` ジョブが実行されれば、Compose 構成をビルドしてテストします。
 - データはサンプルのみ、結果はヒューリスティックによるもの、API は単一インスタンス構成です。詳しくは
   [既知の制約](docs/known-limitations.md)と[ロードマップ](docs/roadmap.md)を参照してください。
+
+## ライセンス
+
+[MIT ライセンス](LICENSE)（© 2026 coderremarks）。スクリーンショット内の地図画像は © OpenStreetMap contributors
+（<https://www.openstreetmap.org/copyright>）です。施設カタログはデモ用のサンプルデータであり、公式の情報源ではありません。

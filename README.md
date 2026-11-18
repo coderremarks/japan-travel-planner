@@ -202,3 +202,9 @@ Topics this project is built to discuss, each with the decision, the trade-off a
   and tests the compose stack as soon as it runs.
 - Sample data only; heuristic results; single API instance. See [known limitations](docs/known-limitations.md)
   and the [roadmap](docs/roadmap.md).
+
+## License
+
+[MIT](LICENSE) © 2026 coderremarks. Map imagery in the screenshots is © OpenStreetMap contributors
+(<https://www.openstreetmap.org/copyright>); the sample catalogue is demonstration data, not an
+official source.

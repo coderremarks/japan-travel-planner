@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.IntegerSchema;
@@ -39,7 +40,8 @@ public class OpenApiConfiguration {
                         .version("v1")
                         .description("Japan Intelligent Travel Planner. Session cookie authentication; "
                                 + "state-changing requests need the X-XSRF-TOKEN header (value of the "
-                                + "XSRF-TOKEN cookie). Errors are RFC 9457 problem details with a stable `code`."))
+                                + "XSRF-TOKEN cookie). Errors are RFC 9457 problem details with a stable `code`.")
+                        .license(new License().name("MIT").identifier("MIT")))
                 .components(new Components()
                         .addSecuritySchemes(
                                 "session",

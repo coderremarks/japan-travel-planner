@@ -17,12 +17,34 @@
     <packaging>pom</packaging>
     <name>Tabiji :: Backend</name>
     <description>Japan Intelligent Travel Planner - backend aggregator</description>
+    <!-- spring-boot-starter-parent hands down Spring's own url, organisation, licence, developers and
+         SCM. Replace them so that the build metadata, and the SBOM generated from it, describe this
+         project (see "Inheriting the Starter Parent POM" in the Spring Boot Maven plugin docs). -->
+    <url/>
+    <organization/>
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://spdx.org/licenses/MIT.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>coderremarks</id>
+            <name>coderremarks</name>
+        </developer>
+    </developers>
 
     <modules>
         <module>optimizer</module>
         <module>app</module>
         <module>benchmarks</module>
     </modules>
+
+    <scm>
+        <url/>
+    </scm>
 
     <properties>
         <java.version>21</java.version>
