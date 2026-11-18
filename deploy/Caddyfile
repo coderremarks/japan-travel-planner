@@ -1,0 +1,30 @@
+# Edge proxy of the compose stack: the only service with a published port.
+#
+# - /api/* goes straight to the Spring Boot API; everything else goes to the Next.js server.
+# - Caddy replaces any client-supplied X-Forwarded-For / -Proto / -Host with what it actually observed
+#   (its default while no trusted_proxies are configured). The API trusts these headers only from
+#   private-network proxies, so its per-IP rate limits see the real client address.
+#   Next.js's own /api rewrite forwards such headers unchanged, which is why the web server is never
+#   the public entry point (docs/deployment.md).
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+:8080 {
+	header -Server
+
+	request_body {
+		max_size 1MB
+	}
+
+	handle /api/* {
+		reverse_proxy api:8080
+	}
+
+	handle {
+		encode zstd gzip
+		reverse_proxy web:3000
+	}
+}

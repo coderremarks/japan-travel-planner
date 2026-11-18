@@ -1,0 +1,16 @@
+# Keep the build context small and free of local state; the image builds from sources only.
+node_modules/
+.next/
+out/
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+next-env.d.ts
+*.tsbuildinfo
+npm-debug.log*
+.env
+.env.*
+Dockerfile
+.dockerignore

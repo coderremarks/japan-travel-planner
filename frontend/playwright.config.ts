@@ -1,10 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * End-to-end tests against a running stack (API + web). Locally:
- *   backend:  ./mvnw -pl app -am spring-boot:test-run      (embedded PostgreSQL, port 8080)
+ * End-to-end tests against a running stack (API + web). Locally, without Docker:
+ *   backend:  ./mvnw -pl app spring-boot:test-run           (embedded PostgreSQL, port 8080)
  *   frontend: npm run build && npm start -- --port 3100
- * CI starts both from the built artifacts (see .github/workflows/ci.yml).
+ * or against the compose stack: E2E_BASE_URL=http://localhost:3000 npx playwright test
+ * CI builds the container images and runs the suite against the compose stack (ci.yml, job e2e).
  */
 export default defineConfig({
   testDir: "./e2e",

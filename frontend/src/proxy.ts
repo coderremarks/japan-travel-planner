@@ -22,7 +22,10 @@ export function proxy(request: NextRequest) {
   }
 
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  const csp = contentSecurityPolicy(nonce, process.env.NODE_ENV === "development");
+  const csp = contentSecurityPolicy(nonce, {
+    development: process.env.NODE_ENV === "development",
+    https: servedOverHttps(request),
+  });
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", csp);
@@ -31,7 +34,17 @@ export function proxy(request: NextRequest) {
   return response;
 }
 
-export function contentSecurityPolicy(nonce: string, development: boolean): string {
+/**
+ * True when the browser reached us over HTTPS, directly or through a TLS-terminating proxy. A
+ * spoofed header can only change the policy of the spoofer's own response, and only by the
+ * `upgrade-insecure-requests` directive, which is not a security boundary (HSTS at the edge is).
+ */
+export function servedOverHttps(request: Pick<NextRequest, "nextUrl" | "headers">): boolean {
+  const forwarded = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim().toLowerCase();
+  return request.nextUrl.protocol === "https:" || forwarded === "https";
+}
+
+export function contentSecurityPolicy(nonce: string, { development, https }: { development: boolean; https: boolean }) {
   const tiles = "https://tile.openstreetmap.org";
   return [
     "default-src 'self'",
@@ -45,7 +58,9 @@ export function contentSecurityPolicy(nonce: string, development: boolean): stri
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    ...(development ? [] : ["upgrade-insecure-requests"]),
+    // Only on HTTPS pages: on a plain-HTTP origin (e.g. the local compose stack) it would rewrite
+    // the page's own same-origin requests to https:// and break them.
+    ...(https && !development ? ["upgrade-insecure-requests"] : []),
   ].join("; ");
 }
 

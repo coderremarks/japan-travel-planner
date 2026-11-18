@@ -1,0 +1,148 @@
+# Quality gates for every pull request and every push to main.
+#   backend   - unit + integration tests on real PostgreSQL (Testcontainers), Spotless, SpotBugs with
+#               FindSecBugs, JaCoCo coverage gates, OpenAPI contract check; SBOM kept as an artifact
+#   frontend  - formatting, ESLint, TypeScript, unit tests, production build, generated API types in
+#               sync with the contract, npm audit of runtime dependencies
+#   e2e       - builds both container images, starts the compose stack (PostgreSQL, API, web, edge
+#               proxy) and runs the Playwright journeys with accessibility checks against it
+# Third-party actions are pinned to full commit SHAs; Dependabot keeps them current.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Verify (tests, static analysis, coverage gates, API contract)
+        # "container" makes the tests fail instead of falling back if Docker is unavailable.
+        run: ./mvnw --batch-mode --no-transfer-progress verify -Dtabiji.test.db=container
+
+      - name: Upload test reports and SBOM
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: backend-reports
+          path: |
+            backend/*/target/surefire-reports/
+            backend/*/target/failsafe-reports/
+            backend/*/target/site/jacoco*/
+            backend/*/target/spotbugsXml.xml
+            backend/app/target/classes/META-INF/sbom/application.cdx.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: frontend/.nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install (lockfile only, no install scripts)
+        run: npm ci --no-audit --no-fund
+
+      - name: Generated API types match docs/api/openapi.json
+        run: |
+          npm run gen:api
+          git diff --exit-code -- src/lib/api/schema.d.ts
+
+      - name: Format, lint, type check, unit tests, production build
+        run: npm run verify
+
+      - name: Audit runtime dependencies
+        run: npm run audit:prod
+
+  e2e:
+    name: End-to-end (compose stack)
+    needs: [backend, frontend]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build images and start the stack
+        run: |
+          umask 077
+          printf 'POSTGRES_PASSWORD=%s\n' "$(openssl rand -hex 24)" > .env
+          docker compose up --build --detach --wait --wait-timeout 600
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: frontend/.nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Playwright and Chromium
+        working-directory: frontend
+        run: |
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Playwright journeys against http://localhost:3000
+        working-directory: frontend
+        env:
+          E2E_BASE_URL: http://localhost:3000
+        run: npx playwright test
+
+      - name: Collect container logs
+        if: ${{ failure() }}
+        run: docker compose logs --no-color --timestamps > compose.log
+
+      - name: Upload Playwright report and logs
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-report
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+            compose.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Stop the stack
+        if: ${{ always() }}
+        run: docker compose down --volumes
