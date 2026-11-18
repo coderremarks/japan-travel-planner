@@ -15,9 +15,11 @@
     <description>Spring Boot REST API: accounts, catalogue, itineraries and planning</description>
 
     <properties>
-        <!-- Measured 90.6 % / 73.5 % on 2026-11-18; gates sit a few points below to avoid flakiness. -->
+        <!-- Measured 90.9 % / 74.2 % on 2026-11-18; gates sit a few points below to avoid flakiness. -->
         <jacoco.line.minimum>0.85</jacoco.line.minimum>
         <jacoco.branch.minimum>0.65</jacoco.branch.minimum>
+        <!-- Empty default; JaCoCo's prepare-agent adds its agent here when coverage is enabled. -->
+        <argLine/>
     </properties>
 
     <dependencies>
@@ -146,8 +148,33 @@
                 <artifactId>cyclonedx-maven-plugin</artifactId>
             </plugin>
             <plugin>
+                <!-- Exposes ${org.mockito:mockito-core:jar} for the agent configured below. -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>dependency-paths</id>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Mockito as a declared agent: self-attaching is deprecated since JDK 21. -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <!-- Spring's test support initialises Mockito in integration tests as well. -->
+                    <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
