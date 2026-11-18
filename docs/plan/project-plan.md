@@ -6,6 +6,35 @@
 > (`docs/architecture.md`, `docs/threat-model.md`, ADRs) refine it; if they disagree, they win and
 > this file notes the change.
 
+## Status (2026-11-18)
+
+Milestones M0–M6 are implemented and committed locally; nothing has been pushed.
+
+**Changes against this plan**
+
+- Internationalisation uses a small dependency-free layer instead of next-intl, TypeScript is 5.9.3
+  instead of 6.0, and Cache Components are off because every page carries a CSP nonce (ADR-0009).
+- An edge proxy (Caddy) is the only public entry point of the compose stack, because Next.js forwards
+  `X-Forwarded-For` unchanged (ADR-0010). The compose file is `compose.yaml`.
+- Dependency scanning uses OSV-Scanner instead of Trivy, plus `npm audit`, CodeQL and gitleaks.
+
+**Acceptance criteria (§9)**
+
+| Criterion | Result |
+| --- | --- |
+| `./mvnw verify` | Passes: 74 optimizer, 25 unit and 58 integration tests; Spotless, SpotBugs (0 findings), ArchUnit, JaCoCo gates |
+| `npm run verify` | Passes: Prettier, ESLint (0 warnings), `tsc`, 43 Vitest tests, `next build` |
+| Hard constraints never violated | 0 violations: 600 random instances in the build, 1,000 in the quality study |
+| Determinism | Tested: identical input gives an identical plan (solver timing statistics aside) |
+| Quality ≥ 95 % optimal | 95.8 % of 1,000 instances (study); ≥ 95 % enforced on 400 in the build |
+| 60 places × 7 days well under 1 s | 468 ± 51 ms (JMH, laptop) — see `docs/benchmarks.md` |
+| Edge-case tests | Present (scenario and API tests) |
+| Security regression tests | Present (`OwnershipSecurityIT`, `AuthFlowIT`, `WebSecurityIT`) |
+| E2E in `en` and `ja` with axe | 5 journeys pass against a production build; the Japanese journey plans but does not export, and map markers are not asserted |
+| Every number in the docs from a run | Yes; dates and machines are stated |
+| Runs without Docker | Yes, on the development machine (Windows 11) |
+| Runs with `docker compose up` | **Not verified**: no Docker on the development machine; the CI job `e2e` covers it once the repository is pushed |
+
 ## 1. Repository review (starting point)
 
 | Item | Finding | Consequence |

@@ -12,4 +12,6 @@ later; a change of mind is a new ADR that supersedes the old one.
 | [0005](0005-real-postgres-in-tests.md) | Real PostgreSQL in tests: Testcontainers, embedded fallback | Accepted |
 | [0006](0006-plan-snapshot-jsonb.md) | Store generated plans as immutable JSONB snapshots | Accepted |
 | [0007](0007-data-provenance.md) | Every estimate is labelled; no invented facts | Accepted |
-| [0008](0008-platform-versions.md) | Java 21 LTS, Spring Boot 4.1, PostgreSQL 18, Next.js 16 | Accepted |
+| [0008](0008-platform-versions.md) | Java 21 LTS, Spring Boot 4.1, PostgreSQL 18, Next.js 16 | Accepted; TypeScript version amended by 0009 |
+| [0009](0009-frontend-as-built.md) | Dependency-free i18n, TypeScript 5.9, no Cache Components | Accepted |
+| [0010](0010-edge-proxy-entry-point.md) | An edge proxy is the only public entry point | Accepted; amends 0004 |
