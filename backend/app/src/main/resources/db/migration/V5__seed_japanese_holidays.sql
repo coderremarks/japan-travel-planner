@@ -1,0 +1,41 @@
+-- Japanese national holidays 2026–2027.
+-- Source: Cabinet Office of Japan, "国民の祝日について", syukujitsu.csv
+--         https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html (downloaded 2026-11-18).
+-- "休日" in the source denotes a substitute holiday (振替休日) or a citizens' holiday (国民の休日).
+
+INSERT INTO japanese_holiday (holiday_date, name_ja, name_en) VALUES
+    (DATE '2026-01-01', '元日',           'New Year''s Day'),
+    (DATE '2026-01-12', '成人の日',       'Coming of Age Day'),
+    (DATE '2026-02-11', '建国記念の日',   'National Foundation Day'),
+    (DATE '2026-02-23', '天皇誕生日',     'The Emperor''s Birthday'),
+    (DATE '2026-03-20', '春分の日',       'Vernal Equinox Day'),
+    (DATE '2026-04-29', '昭和の日',       'Showa Day'),
+    (DATE '2026-05-03', '憲法記念日',     'Constitution Memorial Day'),
+    (DATE '2026-05-04', 'みどりの日',     'Greenery Day'),
+    (DATE '2026-05-05', 'こどもの日',     'Children''s Day'),
+    (DATE '2026-05-06', '休日',           'Substitute holiday'),
+    (DATE '2026-07-20', '海の日',         'Marine Day'),
+    (DATE '2026-08-11', '山の日',         'Mountain Day'),
+    (DATE '2026-09-21', '敬老の日',       'Respect for the Aged Day'),
+    (DATE '2026-09-22', '休日',           'Citizens'' holiday'),
+    (DATE '2026-09-23', '秋分の日',       'Autumnal Equinox Day'),
+    (DATE '2026-10-12', 'スポーツの日',   'Sports Day'),
+    (DATE '2026-11-03', '文化の日',       'Culture Day'),
+    (DATE '2026-11-23', '勤労感謝の日',   'Labour Thanksgiving Day'),
+    (DATE '2027-01-01', '元日',           'New Year''s Day'),
+    (DATE '2027-01-11', '成人の日',       'Coming of Age Day'),
+    (DATE '2027-02-11', '建国記念の日',   'National Foundation Day'),
+    (DATE '2027-02-23', '天皇誕生日',     'The Emperor''s Birthday'),
+    (DATE '2027-03-21', '春分の日',       'Vernal Equinox Day'),
+    (DATE '2027-03-22', '休日',           'Substitute holiday'),
+    (DATE '2027-04-29', '昭和の日',       'Showa Day'),
+    (DATE '2027-05-03', '憲法記念日',     'Constitution Memorial Day'),
+    (DATE '2027-05-04', 'みどりの日',     'Greenery Day'),
+    (DATE '2027-05-05', 'こどもの日',     'Children''s Day'),
+    (DATE '2027-07-19', '海の日',         'Marine Day'),
+    (DATE '2027-08-11', '山の日',         'Mountain Day'),
+    (DATE '2027-09-20', '敬老の日',       'Respect for the Aged Day'),
+    (DATE '2027-09-23', '秋分の日',       'Autumnal Equinox Day'),
+    (DATE '2027-10-11', 'スポーツの日',   'Sports Day'),
+    (DATE '2027-11-03', '文化の日',       'Culture Day'),
+    (DATE '2027-11-23', '勤労感謝の日',   'Labour Thanksgiving Day');

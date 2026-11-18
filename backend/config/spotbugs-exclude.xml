@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   SpotBugs / FindSecBugs suppressions. Every entry must explain why the finding is a false positive
-  or an accepted risk. Keep this list short; prefer fixing the code.
+  or an accepted risk, and be as narrow as possible. Prefer fixing the code.
 -->
 <FindBugsFilter
         xmlns="https://github.com/spotbugs/filter/3.0.0"
@@ -15,5 +15,44 @@
     <Match>
         <Package name="~dev\.tabiji\.optimizer(\..*)?"/>
         <Bug pattern="PREDICTABLE_RANDOM"/>
+    </Match>
+
+    <!--
+      "Finalizer attack" on objects whose constructor throws. Only relevant when untrusted code can
+      subclass the class inside the same JVM, which never happens here; JPA entities cannot be final,
+      and finalization is deprecated for removal (JEP 421).
+    -->
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+
+    <!--
+      Constructor-injected Spring singletons (stateless collaborators), not data that could be
+      mutated behind the object's back.
+    -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Or>
+            <Field type="dev.tabiji.shared.error.ProblemResponseWriter"/>
+            <Field type="dev.tabiji.itinerary.application.ItineraryService"/>
+            <Field type="tools.jackson.databind.json.JsonMapper"/>
+        </Or>
+    </Match>
+
+    <!-- A request wrapper exists precisely to hand out its (counting) input stream. -->
+    <Match>
+        <Class name="dev.tabiji.shared.web.RequestBodyLimitFilter$LimitedRequest"/>
+        <Method name="getInputStream"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+
+    <!--
+      The incoming X-Request-Id is echoed only after matching the allow-list [A-Za-z0-9-]{8,64}, so it
+      cannot contain CR/LF (no response splitting). FindSecBugs cannot see the regex check.
+    -->
+    <Match>
+        <Class name="dev.tabiji.shared.web.RequestIdFilter"/>
+        <Method name="doFilterInternal"/>
+        <Bug pattern="HRS_REQUEST_PARAMETER_TO_HTTP_HEADER"/>
     </Match>
 </FindBugsFilter>

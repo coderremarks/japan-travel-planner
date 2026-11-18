@@ -20,8 +20,8 @@
 
     <modules>
         <module>optimizer</module>
-        <!-- <module>app</module> added in M2 -->
-        <!-- <module>benchmarks</module> added in M5 -->
+        <module>app</module>
+        <module>benchmarks</module>
     </modules>
 
     <properties>

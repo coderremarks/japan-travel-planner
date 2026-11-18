@@ -1,0 +1,22 @@
+# Local development over plain HTTP on localhost.
+server:
+  servlet:
+    session:
+      cookie:
+        # __Host- requires Secure, which browsers only accept over HTTPS (or on localhost in some browsers).
+        name: TABIJI_SESSION
+        secure: false
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+logging:
+  level:
+    dev.tabiji: DEBUG
+
+app:
+  demo:
+    enabled: true

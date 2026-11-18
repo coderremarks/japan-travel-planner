@@ -1,0 +1,99 @@
+# Production-safe defaults. Profiles (local, test) relax only what they must.
+# Secrets come from the environment; nothing secret has a default here.
+spring:
+  application:
+    name: tabiji
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/tabiji}
+    username: ${DATABASE_USERNAME:tabiji}
+    password: ${DATABASE_PASSWORD:}
+    hikari:
+      maximum-pool-size: ${DATABASE_POOL_SIZE:10}
+      connection-timeout: 5000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.default_batch_fetch_size: 64
+      hibernate.jdbc.time_zone: UTC
+      jakarta.persistence.query.timeout: 5000
+  flyway:
+    locations: classpath:db/migration
+  jackson:
+    deserialization:
+      # Mass-assignment guard: unknown fields such as "ownerId" or "role" are rejected, not ignored.
+      fail-on-unknown-properties: true
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+  forward-headers-strategy: native
+  max-http-request-header-size: 16KB
+  error:
+    include-stacktrace: never
+    include-message: never
+    include-binding-errors: never
+    include-exception: false
+    whitelabel:
+      enabled: false
+  servlet:
+    session:
+      timeout: 30m
+      tracking-modes: cookie
+      cookie:
+        # __Host- prefix: browser enforces Secure, Path=/ and no Domain attribute.
+        name: __Host-TABIJI_SESSION
+        http-only: true
+        secure: true
+        same-site: lax
+        path: /
+  tomcat:
+    connection-timeout: 10s
+    max-swallow-size: 64KB
+    max-http-form-post-size: 64KB
+    remoteip:
+      remote-ip-header: X-Forwarded-For
+      protocol-header: X-Forwarded-Proto
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+  writer-with-order-by-keys: true
+
+app:
+  security:
+    # The browser reaches the API through the Next.js proxy (same origin), so no cross-origin
+    # access is needed. List origins here only for a deliberately separate frontend host.
+    cors-allowed-origins: []
+  web:
+    # Tomcat limits form posts but not JSON bodies; see RequestBodyLimitFilter.
+    max-request-body: 64KB
+  rate-limit:
+    api-per-ip-per-minute: 300
+    login-per-ip-per-minute: 20
+    login-per-account-per-15-minutes: 5
+    register-per-ip-per-hour: 10
+    plan-per-user-per-minute: 12
+  planning:
+    max-suggestions: 12
+  demo:
+    enabled: false
+    email: demo@tabiji.example
+    password: ${TABIJI_DEMO_PASSWORD:}

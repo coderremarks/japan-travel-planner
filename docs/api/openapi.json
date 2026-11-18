@@ -1,0 +1,1513 @@
+{
+  "openapi" : "3.1.0",
+  "info" : {
+    "description" : "Japan Intelligent Travel Planner. Session cookie authentication; state-changing requests need the X-XSRF-TOKEN header (value of the XSRF-TOKEN cookie). Errors are RFC 9457 problem details with a stable `code`.",
+    "license" : {
+      "name" : "MIT"
+    },
+    "title" : "Tabiji API",
+    "version" : "v1"
+  },
+  "servers" : [ {
+    "url" : "http://localhost",
+    "description" : "Generated server url"
+  } ],
+  "security" : [ {
+    "csrf" : [ ],
+    "session" : [ ]
+  } ],
+  "paths" : {
+    "/api/v1/admin/stats" : {
+      "get" : {
+        "operationId" : "stats",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Stats"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Aggregate usage counts (ADMIN only)",
+        "tags" : [ "Administration" ]
+      }
+    },
+    "/api/v1/areas" : {
+      "get" : {
+        "operationId" : "areas",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AreaResponse"
+                  }
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Destination areas",
+        "tags" : [ "Catalogue" ]
+      }
+    },
+    "/api/v1/auth/csrf" : {
+      "get" : {
+        "description" : "Sets the XSRF-TOKEN cookie; echo it in X-XSRF-TOKEN.",
+        "operationId" : "csrf",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "token",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/CsrfToken"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CsrfInfoResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Issue the CSRF cookie",
+        "tags" : [ "Authentication" ]
+      }
+    },
+    "/api/v1/auth/login" : {
+      "post" : {
+        "description" : "Rotates the session ID and CSRF token on success.",
+        "operationId" : "login",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Sign in",
+        "tags" : [ "Authentication" ]
+      }
+    },
+    "/api/v1/auth/me" : {
+      "get" : {
+        "description" : "401 when not signed in.",
+        "operationId" : "me",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Current user",
+        "tags" : [ "Authentication" ]
+      }
+    },
+    "/api/v1/auth/register" : {
+      "post" : {
+        "operationId" : "register",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description" : "Created"
+          }
+        },
+        "summary" : "Create an account and sign in",
+        "tags" : [ "Authentication" ]
+      }
+    },
+    "/api/v1/base-locations" : {
+      "get" : {
+        "operationId" : "baseLocations",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "area",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "pattern" : "[A-Z_]{1,32}"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/BaseLocationResponse"
+                  }
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Places to stay (start and end of every trip day)",
+        "tags" : [ "Catalogue" ]
+      }
+    },
+    "/api/v1/itineraries" : {
+      "get" : {
+        "operationId" : "list",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0,
+            "maximum" : 1000,
+            "minimum" : 0
+          }
+        }, {
+          "in" : "query",
+          "name" : "size",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "maximum" : 50,
+            "minimum" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageResponseItinerarySummaryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "List my itineraries, most recently updated first",
+        "tags" : [ "Itineraries" ]
+      },
+      "post" : {
+        "operationId" : "create",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ItineraryRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ItineraryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Create an itinerary",
+        "tags" : [ "Itineraries" ]
+      }
+    },
+    "/api/v1/itineraries/{id}" : {
+      "delete" : {
+        "operationId" : "delete",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Delete an itinerary and its plan",
+        "tags" : [ "Itineraries" ]
+      },
+      "get" : {
+        "description" : "404 for unknown IDs and for other users' IDs alike.",
+        "operationId" : "get",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ItineraryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Get one of my itineraries",
+        "tags" : [ "Itineraries" ]
+      },
+      "put" : {
+        "description" : "Requires If-Match with the ETag you loaded.",
+        "operationId" : "update",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "description" : "ETag of the version being edited, e.g. \"3\"",
+          "in" : "header",
+          "name" : "If-Match",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ItineraryRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ItineraryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Replace an itinerary's editable fields",
+        "tags" : [ "Itineraries" ]
+      }
+    },
+    "/api/v1/itineraries/{id}/calendar.ics" : {
+      "get" : {
+        "operationId" : "calendar",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "in" : "query",
+          "name" : "lang",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "en",
+            "pattern" : "en|ja"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "text/calendar" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "byte"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Export the latest plan as iCalendar",
+        "tags" : [ "Itineraries" ]
+      }
+    },
+    "/api/v1/itineraries/{id}/duplicate" : {
+      "post" : {
+        "operationId" : "duplicate",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ItineraryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Copy an itinerary (without its plan)",
+        "tags" : [ "Itineraries" ]
+      }
+    },
+    "/api/v1/itineraries/{id}/export.json" : {
+      "get" : {
+        "operationId" : "exportJson",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ItineraryExport"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Export the itinerary and its plan as JSON",
+        "tags" : [ "Itineraries" ]
+      }
+    },
+    "/api/v1/itineraries/{id}/plan" : {
+      "get" : {
+        "description" : "stale=true if the itinerary changed since.",
+        "operationId" : "latestPlan",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PlanResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Latest generated plan",
+        "tags" : [ "Itineraries" ]
+      },
+      "post" : {
+        "description" : "OPTIMIZE runs the itinerary optimizer; KEEP_ORDER keeps your order.",
+        "operationId" : "plan",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PlanRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PlanResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Generate a plan",
+        "tags" : [ "Itineraries" ]
+      }
+    },
+    "/api/v1/places" : {
+      "get" : {
+        "description" : "Filters combine with AND; q matches English or Japanese names.",
+        "operationId" : "places",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "area",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "pattern" : "[A-Z_]{1,32}"
+          }
+        }, {
+          "in" : "query",
+          "name" : "category",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "NATURE", "FOOD", "SHOPPING", "MUSEUM", "CULTURE", "ENTERTAINMENT" ]
+          }
+        }, {
+          "in" : "query",
+          "name" : "q",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "maxLength" : 100,
+            "minLength" : 0
+          }
+        }, {
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0,
+            "maximum" : 1000,
+            "minimum" : 0
+          }
+        }, {
+          "in" : "query",
+          "name" : "size",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "maximum" : 50,
+            "minimum" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageResponsePlaceSummaryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Search places",
+        "tags" : [ "Catalogue" ]
+      }
+    },
+    "/api/v1/places/{id}" : {
+      "get" : {
+        "operationId" : "place",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PlaceDetailResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Place details with opening hours and data provenance",
+        "tags" : [ "Catalogue" ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "AreaResponse" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "lat" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "lng" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "name" : {
+            "$ref" : "#/components/schemas/LocalizedText"
+          }
+        }
+      },
+      "BaseLocationResponse" : {
+        "type" : "object",
+        "properties" : {
+          "areaCode" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "lat" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "lng" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "name" : {
+            "$ref" : "#/components/schemas/LocalizedText"
+          },
+          "slug" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Comparison" : {
+        "type" : "object",
+        "properties" : {
+          "additionalPlaces" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "baselineScheduledCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "baselineTravelMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "travelMinutesSaved" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "CsrfInfoResponse" : {
+        "type" : "object",
+        "properties" : {
+          "cookieName" : {
+            "type" : "string"
+          },
+          "headerName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CsrfToken" : {
+        "type" : "object",
+        "properties" : {
+          "headerName" : {
+            "type" : "string"
+          },
+          "parameterName" : {
+            "type" : "string"
+          },
+          "token" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Day" : {
+        "type" : "object",
+        "properties" : {
+          "admissionYen" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "date" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "dayIndex" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "departure" : {
+            "type" : "string",
+            "format" : "time-local"
+          },
+          "holiday" : {
+            "$ref" : "#/components/schemas/LocalizedText"
+          },
+          "returnArrival" : {
+            "type" : "string",
+            "format" : "time-local"
+          },
+          "returnLeg" : {
+            "$ref" : "#/components/schemas/Leg"
+          },
+          "transportCostYen" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "travelMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "visits" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Visit"
+            }
+          }
+        }
+      },
+      "ItineraryExport" : {
+        "type" : "object",
+        "properties" : {
+          "exportedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "itinerary" : {
+            "$ref" : "#/components/schemas/ItineraryResponse"
+          },
+          "plan" : {
+            "$ref" : "#/components/schemas/PlanDocument"
+          },
+          "schemaVersion" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ItineraryRequest" : {
+        "type" : "object",
+        "properties" : {
+          "baseLocationId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "budgetYen" : {
+            "type" : "integer",
+            "format" : "int32",
+            "maximum" : 10000000,
+            "minimum" : 0
+          },
+          "dayEnd" : {
+            "type" : "string",
+            "format" : "time-local"
+          },
+          "dayStart" : {
+            "type" : "string",
+            "format" : "time-local"
+          },
+          "endDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "includeSuggestions" : {
+            "type" : "boolean"
+          },
+          "interests" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "NATURE", "FOOD", "SHOPPING", "MUSEUM", "CULTURE", "ENTERTAINMENT" ]
+            },
+            "maxItems" : 6,
+            "minItems" : 0,
+            "uniqueItems" : true
+          },
+          "maxVisitsPerDay" : {
+            "type" : "integer",
+            "format" : "int32",
+            "maximum" : 12,
+            "minimum" : 1
+          },
+          "startDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "stops" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StopRequest"
+            },
+            "maxItems" : 50,
+            "minItems" : 0
+          },
+          "title" : {
+            "type" : "string",
+            "maxLength" : 120,
+            "minLength" : 0,
+            "pattern" : "[^\\p{Cntrl}]*"
+          },
+          "travelModes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "WALK", "TRANSIT", "TAXI" ]
+            },
+            "maxItems" : 3,
+            "minItems" : 1,
+            "uniqueItems" : true
+          }
+        },
+        "required" : [ "baseLocationId", "budgetYen", "dayEnd", "dayStart", "endDate", "interests", "maxVisitsPerDay", "startDate", "stops", "title", "travelModes" ]
+      },
+      "ItineraryResponse" : {
+        "type" : "object",
+        "properties" : {
+          "baseLocation" : {
+            "$ref" : "#/components/schemas/BaseLocationResponse"
+          },
+          "budgetYen" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "dayEnd" : {
+            "type" : "string",
+            "format" : "time-local"
+          },
+          "dayStart" : {
+            "type" : "string",
+            "format" : "time-local"
+          },
+          "endDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "includeSuggestions" : {
+            "type" : "boolean"
+          },
+          "interests" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "NATURE", "FOOD", "SHOPPING", "MUSEUM", "CULTURE", "ENTERTAINMENT" ]
+            }
+          },
+          "maxVisitsPerDay" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "plan" : {
+            "$ref" : "#/components/schemas/PlanStateResponse"
+          },
+          "startDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "stops" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StopResponse"
+            }
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "travelModes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "WALK", "TRANSIT", "TAXI" ]
+            }
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "version" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "ItinerarySummaryResponse" : {
+        "type" : "object",
+        "properties" : {
+          "endDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "plan" : {
+            "$ref" : "#/components/schemas/PlanStateResponse"
+          },
+          "startDate" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "stopCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "Leg" : {
+        "type" : "object",
+        "properties" : {
+          "costYen" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "distanceMeters" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "estimated" : {
+            "type" : "boolean"
+          },
+          "minutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "mode" : {
+            "type" : "string",
+            "enum" : [ "WALK", "TRANSIT", "TAXI" ]
+          },
+          "source" : {
+            "type" : "string",
+            "enum" : [ "SAME_LOCATION", "DISTANCE_MODEL", "SAMPLE_TRANSIT_NETWORK", "EXTERNAL_PROVIDER" ]
+          },
+          "via" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/LocalizedText"
+            }
+          }
+        }
+      },
+      "LocalizedText" : {
+        "type" : "object",
+        "properties" : {
+          "en" : {
+            "type" : "string"
+          },
+          "ja" : {
+            "type" : "string"
+          }
+        }
+      },
+      "LoginRequest" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "maxLength" : 254,
+            "minLength" : 0
+          },
+          "password" : {
+            "type" : "string",
+            "maxLength" : 128,
+            "minLength" : 0
+          }
+        },
+        "required" : [ "email", "password" ]
+      },
+      "OpeningHoursResponse" : {
+        "type" : "object",
+        "properties" : {
+          "closes" : {
+            "type" : "string"
+          },
+          "dayOfWeek" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "opens" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PageResponseItinerarySummaryResponse" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ItinerarySummaryResponse"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalElements" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PageResponsePlaceSummaryResponse" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PlaceSummaryResponse"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalElements" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PlaceDetailResponse" : {
+        "type" : "object",
+        "properties" : {
+          "closures" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "date"
+            }
+          },
+          "holidayPolicy" : {
+            "type" : "string",
+            "enum" : [ "SAME_AS_WEEKDAY", "OPEN_ON_HOLIDAY_CLOSE_NEXT_DAY" ]
+          },
+          "openingHours" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/OpeningHoursResponse"
+            }
+          },
+          "place" : {
+            "$ref" : "#/components/schemas/PlaceSummaryResponse"
+          },
+          "verifiedOn" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }
+      },
+      "PlaceSummaryResponse" : {
+        "type" : "object",
+        "properties" : {
+          "admissionYen" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "areaCode" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string",
+            "enum" : [ "NATURE", "FOOD", "SHOPPING", "MUSEUM", "CULTURE", "ENTERTAINMENT" ]
+          },
+          "dataSource" : {
+            "type" : "string",
+            "enum" : [ "SAMPLE_UNVERIFIED", "OFFICIAL", "OPEN_DATA" ]
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "lat" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "lng" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "name" : {
+            "$ref" : "#/components/schemas/LocalizedText"
+          },
+          "slug" : {
+            "type" : "string"
+          },
+          "summary" : {
+            "$ref" : "#/components/schemas/LocalizedText"
+          },
+          "visitMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PlanDocument" : {
+        "type" : "object",
+        "properties" : {
+          "algorithmVersion" : {
+            "type" : "string"
+          },
+          "comparison" : {
+            "$ref" : "#/components/schemas/Comparison"
+          },
+          "days" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Day"
+            }
+          },
+          "generatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "hints" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "CHANGE_DATES", "EXTEND_DAILY_HOURS", "ALLOW_MORE_TRAVEL_MODES", "INCREASE_BUDGET", "RAISE_DAILY_LIMIT", "ADD_DAYS", "USE_OPTIMIZER" ]
+            }
+          },
+          "itineraryId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "notices" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "ESTIMATED_TRAVEL", "SAMPLE_CATALOG_DATA", "HOLIDAY_DATA_UNAVAILABLE", "SEARCH_TIME_LIMIT_REACHED" ]
+            }
+          },
+          "schemaVersion" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "solver" : {
+            "$ref" : "#/components/schemas/SolverInfo"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "COMPLETE", "PARTIAL", "INFEASIBLE" ]
+          },
+          "strategy" : {
+            "type" : "string",
+            "enum" : [ "OPTIMIZE", "KEEP_ORDER", "EXACT" ]
+          },
+          "summary" : {
+            "$ref" : "#/components/schemas/Summary"
+          },
+          "unscheduled" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Unscheduled"
+            }
+          }
+        }
+      },
+      "PlanRequest" : {
+        "type" : "object",
+        "properties" : {
+          "strategy" : {
+            "type" : "string",
+            "enum" : [ "OPTIMIZE", "KEEP_ORDER" ]
+          }
+        },
+        "required" : [ "strategy" ]
+      },
+      "PlanResponse" : {
+        "type" : "object",
+        "properties" : {
+          "plan" : {
+            "$ref" : "#/components/schemas/PlanDocument"
+          },
+          "stale" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PlanStateResponse" : {
+        "type" : "object",
+        "properties" : {
+          "stale" : {
+            "type" : "boolean"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "COMPLETE", "PARTIAL", "INFEASIBLE" ]
+          }
+        }
+      },
+      "RegisterRequest" : {
+        "type" : "object",
+        "properties" : {
+          "displayName" : {
+            "type" : "string",
+            "maxLength" : 60,
+            "minLength" : 0
+          },
+          "email" : {
+            "type" : "string",
+            "format" : "email",
+            "maxLength" : 254,
+            "minLength" : 0
+          },
+          "password" : {
+            "type" : "string",
+            "maxLength" : 128,
+            "minLength" : 0
+          },
+          "preferredLocale" : {
+            "type" : "string",
+            "enum" : [ "en", "ja" ]
+          }
+        },
+        "required" : [ "displayName", "email", "password", "preferredLocale" ]
+      },
+      "SolverInfo" : {
+        "type" : "object",
+        "properties" : {
+          "constructionScheduled" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "constructionTravelMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "elapsedMillis" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "improvingMoves" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "iterations" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "seed" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "timeLimitReached" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "Stats" : {
+        "type" : "object",
+        "properties" : {
+          "itineraries" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "plans" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "users" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "StopRequest" : {
+        "type" : "object",
+        "properties" : {
+          "mandatory" : {
+            "type" : "boolean"
+          },
+          "placeId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "required" : [ "placeId" ]
+      },
+      "StopResponse" : {
+        "type" : "object",
+        "properties" : {
+          "mandatory" : {
+            "type" : "boolean"
+          },
+          "place" : {
+            "$ref" : "#/components/schemas/PlaceSummaryResponse"
+          }
+        }
+      },
+      "Summary" : {
+        "type" : "object",
+        "properties" : {
+          "admissionYen" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "budgetYen" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "mandatoryScheduled" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "mandatoryTotal" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "scheduledCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalCostYen" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "transportCostYen" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "travelMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "withinBudget" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "Unscheduled" : {
+        "type" : "object",
+        "properties" : {
+          "mandatory" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "$ref" : "#/components/schemas/LocalizedText"
+          },
+          "placeId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "reason" : {
+            "type" : "string",
+            "enum" : [ "CLOSED_ON_TRIP_DATES", "OUTSIDE_DAILY_HOURS", "NO_ROUTE", "TOO_FAR_FOR_DAY", "OVER_BUDGET", "CONFLICTS_WITH_MUST_VISITS", "DAILY_LIMIT_REACHED", "BUDGET_EXHAUSTED", "NOT_ENOUGH_TIME", "DOES_NOT_FIT_GIVEN_ORDER" ]
+          },
+          "slug" : {
+            "type" : "string"
+          },
+          "suggested" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "UserResponse" : {
+        "type" : "object",
+        "properties" : {
+          "displayName" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "preferredLocale" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Visit" : {
+        "type" : "object",
+        "properties" : {
+          "admissionYen" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "arrival" : {
+            "type" : "string",
+            "format" : "time-local"
+          },
+          "category" : {
+            "type" : "string",
+            "enum" : [ "NATURE", "FOOD", "SHOPPING", "MUSEUM", "CULTURE", "ENTERTAINMENT" ]
+          },
+          "end" : {
+            "type" : "string",
+            "format" : "time-local"
+          },
+          "lat" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "lng" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "mandatory" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "$ref" : "#/components/schemas/LocalizedText"
+          },
+          "placeId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "slug" : {
+            "type" : "string"
+          },
+          "start" : {
+            "type" : "string",
+            "format" : "time-local"
+          },
+          "suggested" : {
+            "type" : "boolean"
+          },
+          "travel" : {
+            "$ref" : "#/components/schemas/Leg"
+          },
+          "waitMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "csrf" : {
+        "in" : "header",
+        "name" : "X-XSRF-TOKEN",
+        "type" : "apiKey"
+      },
+      "session" : {
+        "in" : "cookie",
+        "name" : "TABIJI_SESSION",
+        "type" : "apiKey"
+      }
+    }
+  }
+}

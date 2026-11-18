@@ -1,0 +1,5 @@
+# Production: JSON (Elastic Common Schema) logs for log shipping; includes the request ID from MDC.
+logging:
+  structured:
+    format:
+      console: ecs

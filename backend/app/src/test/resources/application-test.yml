@@ -1,0 +1,25 @@
+# Integration tests run against real PostgreSQL (Testcontainers or embedded binaries, see TestDatabase).
+server:
+  servlet:
+    session:
+      cookie:
+        name: TABIJI_SESSION
+        secure: false
+
+springdoc:
+  api-docs:
+    enabled: true
+
+logging:
+  level:
+    root: WARN
+    dev.tabiji: INFO
+
+app:
+  rate-limit:
+    # Per-IP limits are generous because every MockMvc request comes from 127.0.0.1;
+    # the per-account login limit keeps its production value so it can be tested.
+    api-per-ip-per-minute: 100000
+    login-per-ip-per-minute: 100000
+    register-per-ip-per-hour: 100000
+    plan-per-user-per-minute: 1000
