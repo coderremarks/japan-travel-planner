@@ -66,13 +66,16 @@ public class SecurityConfiguration {
             + "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'";
     private static final String PERMISSIONS_POLICY = "camera=(), microphone=(), geolocation=(), payment=(), usb=()";
 
-    /** Interactive API documentation (only reachable where springdoc is enabled, i.e. local and test). */
+    /**
+     * Interactive API documentation (only reachable where springdoc is enabled, i.e. local and test).
+     * CSRF protection stays on: the documentation is read with GET, which CSRF checks never block, so
+     * switching it off would only remove protection from methods these paths do not serve.
+     */
     @Bean
     @Order(1)
     SecurityFilterChain apiDocsSecurity(HttpSecurity http) throws Exception {
         http.securityMatcher("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable) // read-only GET endpoints
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers.contentSecurityPolicy(csp -> csp.policyDirectives(DOCS_CSP))
                         .frameOptions(frame -> frame.deny()));
