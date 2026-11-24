@@ -1,5 +1,10 @@
 # Tabiji 旅路 — Japan Intelligent Travel Planner
 
+[![CI](https://github.com/coderremarks/japan-travel-planner/actions/workflows/ci.yml/badge.svg)](https://github.com/coderremarks/japan-travel-planner/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/coderremarks/japan-travel-planner/actions/workflows/codeql.yml/badge.svg)](https://github.com/coderremarks/japan-travel-planner/actions/workflows/codeql.yml)
+[![Security](https://github.com/coderremarks/japan-travel-planner/actions/workflows/security.yml/badge.svg)](https://github.com/coderremarks/japan-travel-planner/actions/workflows/security.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 [日本語版 README はこちら](README.ja.md)
 
 Plan a multi-day trip through Japan: pick places, set your dates, daily hours, budget in yen,
@@ -195,11 +200,12 @@ Topics this project is built to discuss, each with the decision, the trade-off a
 
 ## Status and limitations
 
-- Implemented and verified locally on Windows 11 without Docker: `./mvnw verify` and
-  `npm run verify` pass, and the Playwright journeys pass against a production build.
-- **Not yet executed:** the Docker images, the compose stack and the GitHub Actions workflows (no
-  Docker on the development machine, and the repository has not been pushed). The CI job `e2e` builds
-  and tests the compose stack as soon as it runs.
+- Every push runs the full pipeline on GitHub Actions. The first run (2026-11-25) was green on all
+  jobs: backend tests on Testcontainers PostgreSQL, frontend checks, and the end-to-end job, which
+  builds both container images, starts the compose stack (database, API, web, edge proxy — all
+  healthy) and passes the Playwright journeys; CodeQL, gitleaks and OSV-Scanner ran alongside.
+- Also verified on Windows 11 without Docker: `./mvnw verify` and `npm run verify` pass, and the
+  Playwright journeys pass against a production build.
 - Sample data only; heuristic results; single API instance. See [known limitations](docs/known-limitations.md)
   and the [roadmap](docs/roadmap.md).
 

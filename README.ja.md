@@ -1,5 +1,10 @@
 # Tabiji 旅路 — 日本旅行インテリジェント・プランナー
 
+[![CI](https://github.com/coderremarks/japan-travel-planner/actions/workflows/ci.yml/badge.svg)](https://github.com/coderremarks/japan-travel-planner/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/coderremarks/japan-travel-planner/actions/workflows/codeql.yml/badge.svg)](https://github.com/coderremarks/japan-travel-planner/actions/workflows/codeql.yml)
+[![Security](https://github.com/coderremarks/japan-travel-planner/actions/workflows/security.yml/badge.svg)](https://github.com/coderremarks/japan-travel-planner/actions/workflows/security.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 [English README](README.md)
 
 行きたい場所、日程、1日の行動時間、予算（円）、興味、移動手段を指定すると、**最適化された説明可能な旅程**
@@ -190,10 +195,12 @@ flowchart LR
 
 ## 現在の状況と制約
 
-- Docker なしの Windows 11 環境で実装・検証済み：`./mvnw verify` と `npm run verify` が成功し、本番ビルドに対する
+- push のたびに GitHub Actions で全パイプラインが実行されます。最初の実行（2026-11-25）は全ジョブ成功：
+  Testcontainers の PostgreSQL 上でのバックエンドテスト、フロントエンドのチェック、そして両方のコンテナ
+  イメージをビルドして Compose 構成（DB・API・Web・エッジプロキシ、すべて healthy）を起動し、Playwright の
+  シナリオを通す E2E ジョブ。CodeQL、gitleaks、OSV-Scanner も同時に実行しています。
+- Docker なしの Windows 11 環境でも検証済み：`./mvnw verify` と `npm run verify` が成功し、本番ビルドに対する
   Playwright のシナリオもすべて成功しています。
-- **未実行のもの：** Docker イメージ、Compose 構成、GitHub Actions ワークフロー（開発マシンに Docker がなく、
-  リポジトリもまだ push していないため）。CI の `e2e` ジョブが実行されれば、Compose 構成をビルドしてテストします。
 - データはサンプルのみ、結果はヒューリスティックによるもの、API は単一インスタンス構成です。詳しくは
   [既知の制約](docs/known-limitations.md)と[ロードマップ](docs/roadmap.md)を参照してください。
 

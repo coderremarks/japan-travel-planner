@@ -6,9 +6,11 @@
 > (`docs/architecture.md`, `docs/threat-model.md`, ADRs) refine it; if they disagree, they win and
 > this file notes the change.
 
-## Status (2026-11-18)
+## Status (2026-11-25)
 
-Milestones M0–M6 are implemented and committed locally; nothing has been pushed.
+Milestones M0–M6 are implemented. The repository is public at
+<https://github.com/coderremarks/japan-travel-planner>, and its first CI, CodeQL and Security runs on
+2026-11-25 passed every job.
 
 **Changes against this plan**
 
@@ -33,7 +35,8 @@ Milestones M0–M6 are implemented and committed locally; nothing has been pushe
 | E2E in `en` and `ja` with axe | 5 journeys pass against a production build; the Japanese journey plans but does not export, and map markers are not asserted |
 | Every number in the docs from a run | Yes; dates and machines are stated |
 | Runs without Docker | Yes, on the development machine (Windows 11) |
-| Runs with `docker compose up` | **Not verified**: no Docker on the development machine; the CI job `e2e` covers it once the repository is pushed |
+| Runs with `docker compose up` | Yes, in CI on GitHub's `ubuntu-24.04` runners: both images build, all four services become healthy and the Playwright journeys pass (not tried on Docker Desktop) |
+| CI passes | Yes: CI, CodeQL and Security green on the first run (2026-11-25) |
 
 ## 1. Repository review (starting point)
 

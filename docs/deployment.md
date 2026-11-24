@@ -48,10 +48,10 @@ The stack serves **plain HTTP on localhost**. Browsers only keep `Secure` / `__H
 HTTPS (some make an exception for localhost), so `compose.yaml` switches the API to the relaxed session
 cookie of the local profile. That override is for this local stack only; see §3.
 
-> **Status:** the Dockerfiles and `compose.yaml` could not be executed on the development machine
-> (no Docker). The packaged jar was run with the production profile and the standalone web build was
-> run and tested end to end, both outside containers. The CI job `e2e` builds both images and runs the
-> Playwright suite against this exact stack once the repository is pushed.
+> **Status:** this exact stack is built and tested on every push by the CI job `e2e` on GitHub's
+> `ubuntu-24.04` runners: both images are built from scratch, all four services come up healthy and the
+> Playwright journeys pass against `http://localhost:3000` (first green run on 2026-11-25). The
+> development machine has no Docker, so the stack has not been run on Windows or macOS Docker Desktop.
 
 ## 3. Production deployment checklist
 

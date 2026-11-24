@@ -1,11 +1,11 @@
 # Threat Model / 脅威モデル
 
 Method: data-flow diagram → STRIDE per element → controls → residual risk. Reviewed at every
-milestone; last review 2026-11-18 (M6). The "Status" column says whether a control is
-**`tested`** (implemented and covered by an automated test that runs on every build),
+milestone; last review 2026-11-25, after the first CI run. The "Status" column says whether a control
+is **`tested`** (implemented and covered by an automated test that runs on every build),
 **`implemented`** (in the code, verified by review or by hand, without a dedicated automated test),
-**`CI`** (enforced by a GitHub workflow that is written but has not run yet, because nothing has been
-pushed) or **`accepted`** (a residual risk, see §5). The control → code → test mapping is in
+**`CI`** (enforced by a GitHub Actions workflow on every push and pull request) or **`accepted`** (a
+residual risk, see §5). The control → code → test mapping is in
 [security-controls.md](security-controls.md).
 
 ## 1. Assets
@@ -71,7 +71,7 @@ flowchart LR
 | D5 | Login | Lock-out of a victim: an attacker spends the victim's per-account budget | Budget is short (15 min) and per instance | accepted (§5) |
 | E1 | Roles | Becoming ADMIN | Role is not part of any request DTO; admin routes need `ROLE_ADMIN` in the filter chain and in method security | tested |
 | E2 | Frontend | Script injection | React escaping; ESLint bans `dangerouslySetInnerHTML` and `innerHTML`; nonce-based CSP with `'strict-dynamic'`; map markers contain only app-generated numbers | tested (CSP unit + E2E), lint |
-| E3 | Build pipeline | Supply-chain compromise | Lockfiles, `npm ci` without install scripts, Maven wrapper checksum, actions pinned to SHAs, images pinned by digest, `permissions: contents: read`, Dependabot with cooldown, CodeQL, OSV-Scanner, `npm audit`, gitleaks, SBOM | CI (`npm audit`: 0 runtime vulnerabilities, run locally 2026-11-18) |
+| E3 | Build pipeline | Supply-chain compromise | Lockfiles, `npm ci` without install scripts, Maven wrapper checksum, actions pinned to SHAs, images pinned by digest, `permissions: contents: read`, Dependabot with cooldown and an LTS version policy, CodeQL, OSV-Scanner, `npm audit`, gitleaks, SBOM | CI (green since 2026-11-25) |
 
 ## 4. Security requirements traceability
 
@@ -90,5 +90,5 @@ Each control above is mapped to code and to the test that proves it in
 | `X-Forwarded-For` trust | Correct only when the edge overwrites the header and is the only entry point (ADR-0010, [deployment.md](deployment.md)). A deployment that exposes Next.js directly weakens per-IP limits; per-account and per-user limits still hold. |
 | OSM tile requests expose IP + viewed area to a third party | Disclosed here; fix: self-hosted tiles or a privacy-respecting tile proxy. |
 | Sample catalogue data may be outdated | Labelled `SAMPLE_UNVERIFIED` everywhere; never presented as fact. |
-| CI security workflows have not run yet | Written, pinned and validated as YAML, but unexecuted until the repository is pushed; until then the evidence is the local runs listed in [testing-strategy.md](testing-strategy.md). |
+| Dependency updates can arrive faster than review | Dependabot proposes updates weekly after a 7-day cooldown; CI, CodeQL and OSV-Scanner gate every pull request, but merging remains a human decision. Runtime major versions are excluded by policy (ADR-0008, ADR-0009). |
 | Cookie attributes are not asserted by an automated test | MockMvc does not emit the servlet container's session cookie. Checked by hand against the production profile; fix: one test against the embedded server (`RANDOM_PORT`). |

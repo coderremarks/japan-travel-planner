@@ -39,6 +39,6 @@ remove it ([roadmap](roadmap.md)).
 | Limitation | Impact | Path forward |
 | --- | --- | --- |
 | Sessions and rate-limit buckets are in memory | One API instance only; a restart signs everyone out | Spring Session JDBC and a shared bucket store |
-| Docker images, compose stack and GitHub workflows have not been run yet | No evidence yet that they work outside the development machine | They run as soon as the repository is pushed (CI job `e2e` builds and tests the stack) |
+| The compose stack is tested on Linux only | CI builds and runs it on GitHub's Ubuntu runners on every push; it has not been tried on Docker Desktop for Windows or macOS | Run `docker compose up` once on a Docker Desktop machine |
 | No load test | Throughput under concurrent users is unknown | k6/Gatling scenario in CI |
-| Code scanning uploads (CodeQL, OSV) need a public repository or GitHub Advanced Security | On a private repository without it those jobs fail | Make the repository public, or disable SARIF upload |
+| Code scanning uploads (CodeQL, OSV) rely on the repository being public | A private fork without GitHub Advanced Security would fail those jobs | Keep the repository public, or disable SARIF upload in a private fork |

@@ -2,8 +2,8 @@
 
 Every control below points to the code that implements it and to the evidence that it works.
 "Test" means an automated test that runs on every build; "Manual" means it was checked by hand and
-how; "CI" means it is enforced by a workflow that has been written but not yet run on GitHub (nothing
-has been pushed). The threats these controls answer are in the [threat model](threat-model.md).
+how; "CI" means it is enforced by a GitHub Actions workflow on every push and pull request (green since
+the first run on 2026-11-25). The threats these controls answer are in the [threat model](threat-model.md).
 
 Test classes: `AuthFlowIT`, `OwnershipSecurityIT`, `WebSecurityIT`, `ItineraryApiIT`, `CatalogApiIT`,
 `PlanningApiIT` (integration tests on PostgreSQL), `PasswordPolicyTest`, `CalendarExporterTest`,

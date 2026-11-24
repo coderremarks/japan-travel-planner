@@ -110,9 +110,17 @@ CI uses `container`, so a missing Docker daemon fails the build instead of silen
 `.github/workflows/ci.yml` runs on every pull request and every push to `main`: the backend gate, the
 frontend gate plus the contract and audit checks, then the end-to-end suite against the compose stack
 (both container images are built from scratch). `codeql.yml` and `security.yml` add static analysis,
-dependency and secret scanning. These workflows have been written and their YAML validated locally,
-but **they have not run yet**, because nothing has been pushed to GitHub. Until they run, the local
-results above are the evidence.
+dependency and secret scanning. The current status is shown by the badges in the README; the first
+run on 2026-11-25 passed every job.
+
+What the first runs found, and what changed:
+
+- CodeQL flagged that CSRF protection was switched off on the read-only API-documentation filter
+  chain. Switching it off protected nothing, so it is on again (`SecurityConfiguration`).
+- Dependabot's first proposals included Java 24 (already end-of-life), JDK 26, Node.js 26 and a
+  TypeScript major that the contract tooling does not support; the grouped update failed the frontend
+  job, which is the guard working as intended. `dependabot.yml` now keeps the LTS runtime lines
+  (ADR-0008) and TypeScript 5 (ADR-0009) and delivers major versions as separate pull requests.
 
 ## Not covered yet
 
