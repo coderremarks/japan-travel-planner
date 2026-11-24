@@ -104,10 +104,22 @@ jobs:
           persist-credentials: false
 
       - name: Build images and start the stack
+        # The image builds download every dependency. Under bursts of runs (Dependabot opens several pull
+        # requests at once) Maven Central and Docker Hub answer 429 Too Many Requests, so a failed build
+        # is retried after a pause; BuildKit's cache keeps what earlier attempts already downloaded.
         run: |
           umask 077
           printf 'POSTGRES_PASSWORD=%s\n' "$(openssl rand -hex 24)" > .env
-          docker compose up --build --detach --wait --wait-timeout 600
+          for attempt in 1 2 3; do
+            if docker compose build; then
+              break
+            elif [ "$attempt" -eq 3 ]; then
+              exit 1
+            fi
+            echo "::warning::Image build failed (attempt $attempt of 3), possibly rate limited; retrying in 90 s."
+            sleep 90
+          done
+          docker compose up --detach --wait --wait-timeout 600
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:

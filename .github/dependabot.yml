@@ -24,6 +24,11 @@ updates:
       test:
         patterns: ["org.junit*", "org.assertj*", "org.mockito*", "org.testcontainers*", "io.zonky*", "com.tngtech.archunit*"]
         update-types: ["minor", "patch"]
+    ignore:
+      # The Maven version is pinned twice — in the wrapper and in the Docker build image — and must move
+      # in one deliberate change (regenerate the wrapper, bump the image). Dependabot's wrapper update
+      # also committed mvnw.cmd with Windows line endings, which .gitattributes normalises.
+      - dependency-name: "org.apache.maven:apache-maven"
 
   - package-ecosystem: npm
     directory: /frontend

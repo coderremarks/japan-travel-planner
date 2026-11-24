@@ -122,7 +122,11 @@ What the first runs found, and what changed:
   job, which is the guard working as intended. `dependabot.yml` now keeps the LTS runtime lines
   (ADR-0008) and TypeScript 5 (ADR-0009) and delivers major versions as separate pull requests.
   Dependabot cannot parse the Temurin and Maven image tags (it then proposed a less specific Java tag on
-  an older Alpine), so those two images are refreshed by hand with each JDK update.
+  an older Alpine), so those two images are refreshed by hand with each JDK update. Its Maven-wrapper
+  update committed `mvnw.cmd` with Windows line endings and would have split the Maven version between
+  the wrapper and the build image, so Maven itself is now also updated by hand, in one change.
+- When Dependabot opened several pull requests at once, Maven Central answered `429 Too Many Requests`
+  during one end-to-end image build. The job now retries the image build twice after a pause.
 
 ## Not covered yet
 
