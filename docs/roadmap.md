@@ -29,7 +29,8 @@ Ordered by value for a real launch. Nothing here is needed to run or demonstrate
     actuator), dashboards for planning time and rate-limit rejections.
 11. **Automated assertions on security log events** and mutation testing (PIT) for the optimizer.
 12. **Container hardening in CI:** image vulnerability scanning and signing (for example cosign),
-    build caching for faster pipelines.
+    build caching for faster pipelines, and automated refreshes of the Temurin and Maven base images
+    (Renovate understands their tags; Dependabot does not, so they are updated by hand today).
 
 ## Later (product)
 

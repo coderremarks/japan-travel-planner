@@ -121,6 +121,8 @@ What the first runs found, and what changed:
   TypeScript major that the contract tooling does not support; the grouped update failed the frontend
   job, which is the guard working as intended. `dependabot.yml` now keeps the LTS runtime lines
   (ADR-0008) and TypeScript 5 (ADR-0009) and delivers major versions as separate pull requests.
+  Dependabot cannot parse the Temurin and Maven image tags (it then proposed a less specific Java tag on
+  an older Alpine), so those two images are refreshed by hand with each JDK update.
 
 ## Not covered yet
 

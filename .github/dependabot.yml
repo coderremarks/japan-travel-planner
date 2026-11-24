@@ -75,14 +75,15 @@ updates:
     cooldown:
       default-days: 7
     ignore:
-      # Java 21 and Node.js 24 are the LTS lines chosen in ADR-0008. Changing line is a deliberate
-      # decision, not a routine update (the first run proposed Java 24, already end-of-life, and Node 26).
-      - dependency-name: "eclipse-temurin"
-        update-types: ["version-update:semver-major"]
+      # Node.js 24 is the LTS line chosen in ADR-0008; changing line is a deliberate decision, not a
+      # routine update (the first run proposed Node 26).
       - dependency-name: "node"
         update-types: ["version-update:semver-major"]
-      # The maven build image's tag encodes the Maven *and* the JDK version, and Dependabot proposes JDK
-      # changes as Maven updates. Update it by hand, together with the Maven wrapper.
+      # Dependabot cannot parse the Temurin and Maven tags (JDK build numbers, Alpine suffixes, a JDK
+      # encoded in the Maven tag): it proposed Java 24 (end-of-life), JDK 26 and a less specific tag on
+      # an older Alpine. Both images are refreshed by hand together with each quarterly JDK update and the
+      # Maven wrapper; see docs/roadmap.md.
+      - dependency-name: "eclipse-temurin"
       - dependency-name: "maven"
 
   - package-ecosystem: docker-compose
