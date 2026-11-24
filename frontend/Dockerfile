@@ -5,7 +5,7 @@
 # Lint, type checks and tests run in CI (npm run verify) before an image is built. Base images are
 # pinned by digest; Dependabot proposes updates.
 
-FROM node:24.22.3-alpine3.24@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5 AS base
+FROM node:26.13.1-alpine3.24@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS base
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # ---- Dependencies: exactly the lockfile, install scripts disabled (.npmrc) ---------------------------
