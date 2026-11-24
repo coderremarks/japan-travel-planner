@@ -17,10 +17,13 @@ updates:
     groups:
       spring:
         patterns: ["org.springframework*", "org.springdoc*"]
+        update-types: ["minor", "patch"]
       maven-plugins:
         patterns: ["*maven-plugin*", "com.diffplug.spotless*", "com.github.spotbugs*", "org.jacoco*"]
+        update-types: ["minor", "patch"]
       test:
         patterns: ["org.junit*", "org.assertj*", "org.mockito*", "org.testcontainers*", "io.zonky*", "com.tngtech.archunit*"]
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: npm
     directory: /frontend
@@ -32,11 +35,22 @@ updates:
     cooldown:
       default-days: 7
     open-pull-requests-limit: 5
+    # Groups carry only minor and patch updates; a major version arrives as its own pull request, so a
+    # breaking change can no longer hold back safe updates grouped with it.
     groups:
       next-react:
         patterns: ["next", "eslint-config-next", "react", "react-dom", "@types/react", "@types/react-dom"]
+        update-types: ["minor", "patch"]
       development:
         dependency-type: development
+        update-types: ["minor", "patch"]
+    ignore:
+      # TypeScript stays on 5.x while openapi-typescript (contract -> client types) requires it (ADR-0009).
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # Node.js type definitions follow the Node.js 24 LTS runtime (ADR-0008).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
@@ -60,6 +74,16 @@ updates:
       timezone: Asia/Tokyo
     cooldown:
       default-days: 7
+    ignore:
+      # Java 21 and Node.js 24 are the LTS lines chosen in ADR-0008. Changing line is a deliberate
+      # decision, not a routine update (the first run proposed Java 24, already end-of-life, and Node 26).
+      - dependency-name: "eclipse-temurin"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
+      # The maven build image's tag encodes the Maven *and* the JDK version, and Dependabot proposes JDK
+      # changes as Maven updates. Update it by hand, together with the Maven wrapper.
+      - dependency-name: "maven"
 
   - package-ecosystem: docker-compose
     directory: /
@@ -70,3 +94,8 @@ updates:
       timezone: Asia/Tokyo
     cooldown:
       default-days: 7
+    ignore:
+      # A PostgreSQL major version changes the on-disk format: the existing volume needs pg_upgrade or a
+      # dump and restore, so it is a planned migration, never a routine bump.
+      - dependency-name: "postgres"
+        update-types: ["version-update:semver-major"]
