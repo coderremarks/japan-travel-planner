@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/root/.m2/repository \
  && java -Djarmode=tools -jar application.jar extract --layers --destination extracted
 
 # ---- Runtime ----------------------------------------------------------------------------------------
-FROM eclipse-temurin:21.0.13_9-jre-alpine-3.24@sha256:ac05c3c42b7c2f1a52c9bd52f01041fa1958231b15ebeae7420429cbc5baf474
+FROM eclipse-temurin:24-jre-alpine-3.22@sha256:4044b6c87cb088885bcd0220f7dc7a8a4aab76577605fa471945d2e98270741f
 
 RUN addgroup -S -g 10001 tabiji \
  && adduser -S -D -H -u 10001 -G tabiji -s /sbin/nologin tabiji
